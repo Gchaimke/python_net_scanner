@@ -1,3 +1,4 @@
+import argparse
 import csv
 from dataclasses import dataclass
 from datetime import datetime
@@ -5,7 +6,6 @@ from os import path
 import pathlib
 import re
 import subprocess
-import sys
 
 PROJECT_PATH = pathlib.Path(__file__).parent
 MAC_DBS = path.join(PROJECT_PATH, "mac_dbs.csv")
@@ -118,21 +118,17 @@ class NetScanner():
 
 
 if __name__ == '__main__':
-    args = sys.argv
-    if not sys.argv:
-        print("minimum one IP required")
-        exit
 
-    if len(sys.argv) == 1:
-        start_ip = '192.168.1.1'
-        end_ip = '192.168.1.10'
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-s', '--startip',required=True)
+    parser.add_argument('-e', '--endip')
+    args = parser.parse_args()
 
-    if len(sys.argv) == 2:
-        start_ip = end_ip = sys.argv[1]
-
-    if len(sys.argv) == 3:
-        start_ip = sys.argv[1]
-        end_ip = sys.argv[0]
+    if not args.endip:
+        start_ip = end_ip = args.startip
+    else:
+        start_ip = args.startip
+        end_ip = args.endip
 
     app = NetScanner(start_ip=start_ip, end_ip=end_ip)
     app.run()
